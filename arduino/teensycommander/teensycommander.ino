@@ -35,6 +35,9 @@ const int nDigitalIn = sizeof(pinsDigitalIn) / sizeof(pinsDigitalIn[0]);
 const int pinsDigitalOut[] = {8, 9, 10, 11, 12, 13, 14, 24};
 const int nDigitalOut = sizeof(pinsDigitalOut) / sizeof(pinsDigitalOut[0]);
 const int nStates = 8;
+const int pinsPulsePins[] = {13, 14};
+const int nPulsePins = sizeof(pinsPulsePins) / sizeof(pinsPulsePins[0]);
+PulsePin** pulsePins = new PulsePin*[nPulsePins];
 
 #define WHEEL_ENC_PINA 5
 #define WHEEL_ENC_PINB 6
@@ -49,10 +52,6 @@ Encoder wheelEncoder(WHEEL_ENC_PINA, WHEEL_ENC_PINB);
 IntervalTimer gatherTimer;
 elapsedMicros current_micros;
 elapsedMillis current_millis;
-
-const int pinsPulsePins[] = {13, 14};
-const int nPulsePins = sizeof(pinsPulsePins) / sizeof(pinsPulsePins[0]);
-PulsePin** pulsePins = new PulsePin*[nPulsePins];
 
 FastCRC16 CRC16;
 PacketSerial packetSerialA;
