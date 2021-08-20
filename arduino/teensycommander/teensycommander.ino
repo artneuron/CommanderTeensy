@@ -58,6 +58,28 @@ FastCRC16 CRC16;
 PacketSerial packetSerialA;
 PacketSerial packetSerialB;
 
+String arrayToString(const int intArray[], const int numElements); //Prototype
+String numToString(const int integer); //Prototype
+
+String handshakeMessage = "{\"samplereate\": 100," \
+                            "\"pinDef\": {"  \
+                            "\"analogIn\":{"    \
+                            "\"num\": " + numToString(nAnalogIn) + " ,"    \
+                            "\"pins\": [" + arrayToString(pinsAnalogIn, nAnalogIn) +   "],"    \
+                            "\"dtype\": \"L\"},"  \
+                            "\"digitalIn\":{"    \
+                            "\"num\": " + numToString(nDigitalIn) + ","    \
+                            "\"pins\": [" + arrayToString(pinsDigitalIn, nDigitalIn) + "],"   \
+                            "\"dtype\": \"L\"},"  \
+                            "\"digitalOut\":{"    \
+                            "\"num\": " + numToString(nDigitalOut) + ","    \
+                            "\"pins\": [" + arrayToString(pinsDigitalOut, nDigitalOut) + "],"  \
+                            "\"dtype\": \"L\"}," \
+                            "\"pulse\":{"    \
+                            "\"num\": " + numToString(nPulsePins) + ","   \
+                            "\"pins\": [" + arrayToString(pinsPulsePins, nPulsePins) + "],"  \
+                            "\"dtype\": \"L\"}}}";
+
 // intermediate values
 long encoderPosition = 0;
 int last_packet_took = 0;
@@ -72,7 +94,6 @@ enum packetType: uint8_t {
   ptOK,
   ptACK
 };
-
 
 const uint16_t syncCounterMax = 0x95FF;
 const uint16_t syncCounterMin = 0x9500;
@@ -185,7 +206,7 @@ void reset() {
   interrupts();
 }
 
-void setup() {
+void setup() {   
   pinMode(ledPin, OUTPUT);
   
   // analog input channels
@@ -436,8 +457,30 @@ void processInstruction (const uint8_t* buf, size_t buf_sz) {
         reset();
         break;
         
+      case instHANDSHAKE:
+        EXTSERIAL.println(handshakeMessage); 
+        break;
+        
       default:
         EXTSERIAL.println("Unknown command"); 
         break;
   }
+}
+
+String arrayToString(const int intArray[], const int numElements){
+  String arrayString = "";
+  for(int i = 0; i < numElements; i++){
+    if (i == numElements-1){
+      arrayString = arrayString + intArray[i];
+    }else{
+      arrayString = arrayString + intArray[i] + ",";
+    }
+  }
+  return arrayString;
+}
+
+String numToString(const int integer){
+  String numString = "";
+  return numString + integer;
+  //return sprintf(number_str, "%f", integer);
 }
