@@ -60,7 +60,7 @@ PacketSerial packetSerialB;
 String arrayToString(const int intArray[], const int numElements); //Prototype
 String numToString(const int integer); //Prototype
 
-String handshakeMessage = "{\"samplereate\": 100," \
+String handshakeMessage = "{\"samplereate\": 1000," \
                             "\"pinDef\": {"  \
                             "\"analogIn\":{"    \
                             "\"num\": " + numToString(nAnalogIn) + " ,"    \
