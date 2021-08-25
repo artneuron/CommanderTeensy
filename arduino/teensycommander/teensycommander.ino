@@ -91,7 +91,8 @@ enum packetType: uint8_t {
   ptINSTR,
   ptERROR,
   ptOK,
-  ptACK
+  ptACK,
+  ptHANDS
 };
 
 const uint16_t syncCounterMax = 0x95FF;
@@ -179,11 +180,26 @@ struct errorPacket {
                    packetID(packetCount++) {}    
 };
 
+int lengthofIt = handshakeMessage.length();
+
+struct handshakePacket {
+    uint8_t type;                // 1 B, packet type
+    uint8_t length;              // 1 B, packet size
+    uint16_t crc16;              // 2 B, CRC16
+
+    String message;      // , handshake message
+    
+    handshakePacket() : type(ptSTATUS),
+                        length(sizeof(handshakePacket)),
+                        crc16(0) {}
+};
+
 const int ledPin = LED_BUILTIN;
 volatile unsigned long counter = 0;
 
 // current state, will be overwritten on gather
 dataPacket State;
+handshakePacket handshake;
 
 void reset() {
   noInterrupts();
@@ -207,6 +223,9 @@ void reset() {
 
 void setup() {   
   pinMode(ledPin, OUTPUT);
+
+  handshake.message = handshakeMessage;
+  handshake.crc16 = CRC16.kermit((uint8_t*) &handshake, sizeof(handshake));
   
   // analog input channels
   analogReadResolution(16);
@@ -458,6 +477,8 @@ void processInstruction (const uint8_t* buf, size_t buf_sz) {
         
       case instHANDSHAKE:
         EXTSERIAL.println(handshakeMessage); 
+        packetSerialA.send((byte*) &handshake, sizeof(handshake));
+        packetSerialB.send((byte*) &handshake, sizeof(handshake));
         break;
         
       default:
